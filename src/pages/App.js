@@ -13,10 +13,15 @@ function App() {
   const [currentRepo, setCurrentRepo] = useState('');
   const [repos, setRepos] = useState([]);
 
-
   const handleSearchRepo = async () => {
 
-    const {data} = await api.get(`repos/${currentRepo}`)
+    try {
+      var { data } = await api.get(`repos/${currentRepo}`);
+      console.log(data);
+    } catch (error) {
+      alert(error.response?.status === 404 ? 'Repositório não encontrado' :
+                                             'Erro ' + error.response?.status + ' na busca do repositório'); 
+    }
 
     if(data.id){
 
@@ -24,19 +29,19 @@ function App() {
 
       if(!isExist){
         setRepos(prev => [...prev, data]);
-        setCurrentRepo('')
-        return
+        setCurrentRepo('');
+        return;
       }
 
     }
-    alert('Repositório não encontrado')
+    alert('Repositório já inserido')
 
   }
 
   const handleRemoveRepo = (id) => {
     console.log('Removendo registro', id);
 
-    // utilizar filter.
+    setRepos(repos.filter(repo => repo.id !== id));
   }
 
 
